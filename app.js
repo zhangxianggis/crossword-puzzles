@@ -23,8 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 bird.name.length >= 2 &&
                 bird.name.length <= 5
             );
+            // 从最小、最大值之间随机选择一个数量
+            const minCnt = 10;
+            const maxCnt = 15;
+            const randomCnt = Math.floor(Math.random() * (maxCnt - minCnt + 1)) + minCnt;
+
+
             // 随机选择8个鸟类
-            const selectedBirds = selectRandomBirds(validBirds, 8);
+            const selectedBirds = selectRandomBirds(validBirds, randomCnt);
             // 生成填字游戏数据
             puzzleData = generatePuzzleData(selectedBirds);
             createGrid(puzzleData);
