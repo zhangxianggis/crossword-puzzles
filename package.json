@@ -1,0 +1,17 @@
+{
+  "name": "crossword-puzzles",
+  "version": "1.0.0",
+  "description": "基于鸟类数据的填字游戏",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "live-server"
+  },
+  "keywords": ["填字游戏", "鸟类", "教育"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "xlsx": "^0.18.5"
+  }
+}

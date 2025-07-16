@@ -1,3 +1,5 @@
+import { generatePuzzleData } from './src/puzzle-generator.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const crosswordGrid = document.getElementById('crossword-grid');
     const acrossClues = document.getElementById('across-clues');
@@ -9,17 +11,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let puzzleData = null;
     let currentInput = null;
 
-    // 加载JSON配置文件
-    fetch('puzzle_config.json')
+
+
+    // 加载鸟类数据
+    fetch('data/birdsData.json')
         .then(response => response.json())
-        .then(data => {
-            puzzleData = data;
-            createGrid(data);
-            createClues(data);
+        .then(birds => {
+            // 筛选出2-5个字的鸟类名称
+            const validBirds = birds.filter(bird =>
+                typeof bird.name === 'string' &&
+                bird.name.length >= 2 &&
+                bird.name.length <= 5
+            );
+            // 随机选择8个鸟类
+            const selectedBirds = selectRandomBirds(validBirds, 8);
+            // 生成填字游戏数据
+            puzzleData = generatePuzzleData(selectedBirds);
+            createGrid(puzzleData);
+            createClues(puzzleData);
         })
         .catch(error => {
-            console.error('Error loading puzzle configuration:', error);
-            message.textContent = '加载配置文件失败，请确保puzzle_config.json存在且格式正确。';
+            console.error('Error loading birds data:', error);
+            message.textContent = '加载鸟类数据失败，请确保birdsData.json存在且格式正确。';
         });
 
     // 创建填字游戏网格
@@ -103,15 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     }
 
-    // 判断是否为纵向单词的起始位置
-    function isDownWord(row, col) {
-        // 如果当前单元格下方有单元格且不是黑色，则是纵向单词
-        if (row + 1 < puzzleData.height && puzzleData.grid[row + 1][col] !== 'black') {
-            // 如果是第一行或上方是黑色，则是纵向单词的起始位置
-            return row === 0 || puzzleData.grid[row - 1][col] === 'black';
-        }
-        return false;
-    }
+
 
     // 高亮当前单词
     function highlightWord(row, col) {
@@ -198,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return null;
-}
+    }
 
     // 预览答案
     function previewAnswer() {
@@ -285,3 +290,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// 随机选择鸟类
+function selectRandomBirds(birds, count) {
+    // 复制数组以避免修改原数组
+    const shuffled = [...birds].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+}
+
