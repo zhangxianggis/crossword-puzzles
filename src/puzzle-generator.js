@@ -5,8 +5,10 @@ export function generatePuzzleData(birds) {
     const width = 10;
     const height = 10;
     let grid = Array(height).fill().map(() => Array(width).fill('black'));
-    const acrossClues = [];
-    const downClues = [];
+
+    let acrossClues = [];
+    let downClues = [];
+    let wordPositions = {};
     let currentNumber = 1;
     const placedWords = [];
     const maxCnt = birds.length
@@ -18,14 +20,15 @@ export function generatePuzzleData(birds) {
     }));
 
     // 优化的填字游戏生成算法
-    function backtrack(remainingWords, currentGrid, currentAcross, currentDown, currentNum) {
+    function backtrack(remainingWords, currentGrid, currentAcross, currentDown, currentNum, wordPositions) {
         // 如果没有剩余单词或达到最大单词数，返回当前结果
         if (remainingWords.length === 0 || placedWords.length >= maxCnt) {
             return {
                 success: true,
                 grid: currentGrid,
                 acrossClues: currentAcross,
-                downClues: currentDown
+                downClues: currentDown,
+                wordPositions: wordPositions
             };
         }
 
@@ -49,7 +52,9 @@ export function generatePuzzleData(birds) {
                     // 创建网格副本
                     const newGrid = currentGrid.map(row => [...row]);
                     // 放置单词
-                    placeWord(newGrid, word.text, row, col, direction, currentNum);
+                    const positions = placeWord(newGrid, word.text, row, col, direction, currentNum);
+                    const newWordPositions = { ...wordPositions };
+                    newWordPositions[currentNum] = positions;
                     // 记录线索
                     const newAcross = [...currentAcross];
                     const newDown = [...currentDown];
@@ -60,7 +65,7 @@ export function generatePuzzleData(birds) {
                     }
 
                     // 递归继续放置下一个单词
-                    const result = backtrack(newRemaining, newGrid, newAcross, newDown, currentNum + 1);
+                    const result = backtrack(newRemaining, newGrid, newAcross, newDown, currentNum + 1, newWordPositions);
                     if (result.success) {
                         return result;
                     }
@@ -151,19 +156,20 @@ export function generatePuzzleData(birds) {
     }
 
     // 开始回溯算法
-    const result = backtrack(allWords, grid, acrossClues, downClues, currentNumber);
+    const result = backtrack(allWords, grid, acrossClues, downClues, currentNumber, {});
 
     // 如果回溯成功，使用结果；否则使用默认单词
     if (result.success) {
         grid = result.grid;
-        acrossClues.push(...result.acrossClues);
-        downClues.push(...result.downClues);
+        acrossClues = result.acrossClues;
+        downClues = result.downClues;
+        wordPositions = result.wordPositions;
     } else {
 
     }
 
 
-    return { width, height, grid, acrossClues, downClues };
+    return { width, height, grid, acrossClues, downClues, wordPositions: wordPositions || {} };
 }
 
 // 检查单词是否可以放置
@@ -194,6 +200,7 @@ function canPlaceWord(grid, word, row, col, direction) {
 
 // 放置单词到网格
 function placeWord(grid, word, row, col, direction, number) {
+    const positions = [];
     for (let i = 0; i < word.length; i++) {
         const r = direction === 'across' ? row : row + i;
         const c = direction === 'across' ? col + i : col;
@@ -201,5 +208,7 @@ function placeWord(grid, word, row, col, direction, number) {
         grid[r][c] = i === 0 ?
             { number, answer: word[i] } :
             { answer: word[i] };
+        positions.push([r, c]);
     }
+    return positions;
 }
