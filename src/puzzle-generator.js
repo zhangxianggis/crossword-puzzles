@@ -1,17 +1,18 @@
 // 生成填字游戏数据
-export function generatePuzzleData(birds) {
+export function generatePuzzleData(birds, width = 8, height = 8, maxCnt = null) {
     console.info(birds)
     // 创建10x10的网格
-    const width = 10;
-    const height = 10;
+    // 使用传入的参数或默认值
+    // const width = 10;
+    // const height = 10;
     let grid = Array(height).fill().map(() => Array(width).fill('black'));
 
     let acrossClues = [];
     let downClues = [];
     let wordPositions = {};
     let currentNumber = 1;
-    const placedWords = [];
-    const maxCnt = birds.length
+    const defaultMaxCnt = Math.min(birds.length, Math.floor((width * height) / 5)); // 限制最大单词数为网格面积的1/5
+    maxCnt = maxCnt !== null ? maxCnt : defaultMaxCnt;
 
     // 从鸟类数据中提取单词和线索
     const allWords = birds.map(bird => ({
@@ -22,7 +23,7 @@ export function generatePuzzleData(birds) {
     // 优化的填字游戏生成算法
     function backtrack(remainingWords, currentGrid, currentAcross, currentDown, currentNum, wordPositions) {
         // 如果没有剩余单词或达到最大单词数，返回当前结果
-        if (remainingWords.length === 0 || placedWords.length >= maxCnt) {
+        if (remainingWords.length === 0 || currentNum > maxCnt + 1) { // 使用currentNum跟踪已放置单词数
             return {
                 success: true,
                 grid: currentGrid,
@@ -33,7 +34,9 @@ export function generatePuzzleData(birds) {
         }
 
         // 随机选择一个单词
-        const wordIndex = Math.floor(Math.random() * remainingWords.length);
+        // 优先选择长度适中的单词提高匹配率
+        const sortedWords = [...remainingWords].sort((a, b) => Math.abs(a.text.length - 5) - Math.abs(b.text.length - 5));
+        const wordIndex = Math.min(Math.floor(Math.random() * 3), sortedWords.length - 1); // 从最优3个候选词中选择
         const word = remainingWords[wordIndex];
         const newRemaining = [...remainingWords.slice(0, wordIndex), ...remainingWords.slice(wordIndex + 1)];
 
@@ -50,7 +53,8 @@ export function generatePuzzleData(birds) {
                 // 检查是否可以放置单词
                 if (canPlaceWord(currentGrid, word.text, row, col, direction)) {
                     // 创建网格副本
-                    const newGrid = currentGrid.map(row => [...row]);
+                    // 使用结构化克隆优化网格复制性能
+                    const newGrid = structuredClone(currentGrid);
                     // 放置单词
                     const positions = placeWord(newGrid, word.text, row, col, direction, currentNum);
                     const newWordPositions = { ...wordPositions };
@@ -73,7 +77,11 @@ export function generatePuzzleData(birds) {
             }
         }
 
-        // 如果无法放置当前单词，回溯
+        // 如果无法放置当前单词，尝试剩余单词
+        for (let i = 0; i < newRemaining.length; i++) {
+            const result = backtrack([...newRemaining.slice(0, i), ...newRemaining.slice(i + 1)], currentGrid, currentAcross, currentDown, currentNum, wordPositions);
+            if (result.success) return result;
+        }
         return { success: false };
     }
 
@@ -165,7 +173,12 @@ export function generatePuzzleData(birds) {
         downClues = result.downClues;
         wordPositions = result.wordPositions;
     } else {
-
+        console.warn('无法放置所有单词，使用部分结果');
+        // 当回溯失败时，尝试减少单词数量重新生成
+        if (maxCnt > 3) {
+            const reducedMaxCnt = Math.floor(maxCnt * 0.8);
+            return generatePuzzleData(birds, width, height, reducedMaxCnt);
+        }
     }
 
 
