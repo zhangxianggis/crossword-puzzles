@@ -1,0 +1,30 @@
+{
+    "width": 10,
+    "height": 10,
+    "grid": [
+        [{"number": 1, "answer": "H"}, {"answer": "E"}, {"answer": "L"}, {"answer": "L"}, {"answer": "O"}, "black", {"number": 6, "answer": "W"}, {"answer": "O"}, {"answer": "R"}, {"answer": "L"}],
+        [{"answer": "E"}, "black", {"number": 2, "answer": "A"}, {"answer": "P"}, {"answer": "P"}, {"answer": "L"}, {"answer": "E"}, "black", {"answer": "D"}, {"answer": "!"}],
+        [{"answer": "L"}, {"answer": "I"}, {"answer": "G"}, {"answer": "H"}, {"answer": "T"}, "black", {"answer": "R"}, {"answer": "I"}, {"answer": "G"}, {"answer": "H"}],
+        [{"answer": "L"}, {"answer": "I"}, "black", {"answer": "E"}, {"answer": "G"}, {"answer": "G"}, {"answer": "S"}, {"answer": "A"}, {"answer": "W"}, {"answer": "Y"}],
+        [{"answer": "O"}, {"answer": "N"}, {"answer": "I"}, {"answer": "O"}, {"answer": "N"}, "black", {"answer": "T"}, {"answer": "E"}, {"answer": "A"}, {"answer": "M"}],
+        ["black", {"number": 3, "answer": "S"}, {"answer": "U"}, {"answer": "N"}, {"answer": "S"}, {"answer": "H"}, {"answer": "I"}, {"answer": "N"}, {"answer": "E"}, "black"],
+        [{"number": 4, "answer": "P"}, {"answer": "Y"}, {"answer": "T"}, {"answer": "H"}, {"answer": "O"}, {"answer": "N"}, "black", {"answer": "C"}, {"answer": "O"}, {"answer": "D"}],
+        [{"answer": "L"}, "black", {"answer": "H"}, {"answer": "O"}, {"answer": "M"}, {"answer": "E"}, {"answer": "R"}, {"answer": "U"}, {"answer": "N"}, {"answer": "S"}],
+        [{"answer": "A"}, {"answer": "P"}, {"answer": "P"}, {"answer": "L"}, {"answer": "E"}, "black", {"answer": "S"}, {"answer": "K"}, {"answer": "Y"}, {"answer": "E"}],
+        [{"answer": "N"}, {"answer": "E"}, {"answer": "T"}, {"answer": "W"}, {"answer": "O"}, {"answer": "R"}, {"answer": "K"}, "black", {"answer": "T"}, {"answer": "E"}]
+    ],
+    "acrossClues": [
+        {"number": 1, "text": "Common greeting"},
+        {"number": 2, "text": "Fruit that grows on trees"},
+        {"number": 3, "text": "Bright celestial object"},
+        {"number": 4, "text": "Programming language"},
+        {"number": 6, "text": "Planet we live on"}
+    ],
+    "downClues": [
+        {"number": 1, "text": "Opposite of dark"},
+        {"number": 2, "text": "Another word for happy"},
+        {"number": 3, "text": "Type of energy from the sun"},
+        {"number": 4, "text": "A type of fruit"},
+        {"number": 6, "text": "A group of people working together"}
+    ]
+}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>填字游戏</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>填字游戏</h1>
+        <div class="crossword-container">
+            <div id="crossword-grid"></div>
+            <div class="clues-container">
+                <div class="clues-across">
+                    <h3>横向</h3>
+                    <div id="across-clues"></div>
+                </div>
+                <div class="clues-down">
+                    <h3>纵向</h3>
+                    <div id="down-clues"></div>
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+    <button id="check-btn">检查答案</button>
+    <button id="preview-btn">预览答案</button>
+    <button id="reset-btn">重置</button>
+            <div id="message"></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
