@@ -8,8 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetBtn = document.getElementById('reset-btn');
     const previewBtn = document.getElementById('preview-btn');
     const message = document.getElementById('message');
+    const wordInput = document.getElementById('word-input');
+    const submitWordBtn = document.getElementById('submit-word');
     let puzzleData = null;
     let currentInput = null;
+    let currentWordPositions = [];
 
 
 
@@ -72,7 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         const targetNumber = parseInt(e.target.textContent, 10);
                         console.log('Clicked number:', targetNumber);
                         currentInput = inputElement;
+                        currentWordPositions = puzzleData.wordPositions[targetNumber];
                         highlightWord(targetNumber); // 传递数字参数
+                        wordInput.value = '';
+                        wordInput.focus();
                     });
                 }
 
@@ -141,6 +147,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 预览答案按钮事件
     previewBtn.addEventListener('click', previewAnswer);
+
+    // 提交答案按钮事件
+    submitWordBtn.addEventListener('click', () => {
+        if (currentWordPositions.length === 0 || !wordInput.value) return;
+
+        const answer = wordInput.value.trim().toUpperCase();
+        if (answer.length !== currentWordPositions.length) {
+            message.textContent = `答案长度必须为${currentWordPositions.length}个字符`;
+            message.style.color = '#faad14';
+            return;
+        }
+
+        currentWordPositions.forEach((pos, index) => {
+            const row = pos[0];
+            const col = pos[1];
+            const cell = document.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+            if (cell) {
+                cell.value = answer[index];
+            }
+        });
+
+        wordInput.value = '';
+        message.textContent = '';
+    });
 
     // 检查答案
     checkBtn.addEventListener('click', () => {
