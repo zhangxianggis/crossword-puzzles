@@ -2,17 +2,19 @@ import { generatePuzzleData } from './src/puzzle-generator.js';
 const selectedBgColor = '#e6f7ff'
 document.addEventListener('DOMContentLoaded', () => {
     const crosswordGrid = document.getElementById('crossword-grid');
-    const acrossClues = document.getElementById('across-clues');
-    const downClues = document.getElementById('down-clues');
     const checkBtn = document.getElementById('check-btn');
     const resetBtn = document.getElementById('reset-btn');
     const previewBtn = document.getElementById('preview-btn');
     const message = document.getElementById('message');
     const wordInput = document.getElementById('word-input');
     const submitWordBtn = document.getElementById('submit-word');
+    const speciesImage = document.getElementById('species-image');
+    const imageLoading = document.getElementById('image-loading');
+    const imageError = document.getElementById('image-error');
     let puzzleData = null;
     let currentInput = null;
     let currentWordPositions = [];
+    let currentScientificName = '';
 
 
 
@@ -38,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
             puzzleData = generatePuzzleData(selectedBirds);
             console.log(puzzleData)
             createGrid(puzzleData);
-            createClues(puzzleData);
         })
         .catch(error => {
             console.error('Error loading birds data:', error);
@@ -79,6 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         highlightWord(targetNumber); // 传递数字参数
                         wordInput.value = '';
                         wordInput.focus();
+                        // 获取对应的科学名称并加载图片
+                        const targetClue = [...puzzleData.acrossClues, ...puzzleData.downClues].find(clue => clue.number === targetNumber);
+                        debugger
+                        if (targetClue && targetClue.obj) {
+                            currentScientificName = targetClue.obj.scientificName;
+                            fetchSpeciesImage(currentScientificName);
+                        }
                     });
                 }
 
@@ -95,24 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 创建线索列表
-    function createClues(data) {
-        // 横向线索
-        data.acrossClues.forEach(clue => {
-            const clueElement = document.createElement('div');
-            clueElement.classList.add('clue');
-            clueElement.innerHTML = `<span class="clue-number">${clue.number}.</span> ${clue.text}`;
-            acrossClues.appendChild(clueElement);
-        });
-
-        // 纵向线索
-        data.downClues.forEach(clue => {
-            const clueElement = document.createElement('div');
-            clueElement.classList.add('clue');
-            clueElement.innerHTML = `<span class="clue-number">${clue.number}.</span> ${clue.text}`;
-            downClues.appendChild(clueElement);
-        });
-    }
 
     // 根据数字高亮对应的单词
     function highlightWord(targetNumber) {
@@ -171,6 +161,41 @@ document.addEventListener('DOMContentLoaded', () => {
         wordInput.value = '';
         message.textContent = '';
     });
+
+    // 获取物种图片
+    function fetchSpeciesImage(scientificName) {
+        if (!scientificName) return;
+
+        // 显示加载状态
+        speciesImage.style.display = 'none';
+        imageError.style.display = 'none';
+        imageLoading.style.display = 'block';
+
+        // 请求iNaturalist API
+        fetch(`https://api.inaturalist.org/v1/taxa?rank=species&q=${encodeURIComponent(scientificName)}`)
+            .then(response => {
+                if (!response.ok) throw new Error('网络响应不正常');
+                return response.json();
+            })
+            .then(data => {
+                if (data.results && data.results.length > 0 && data.results[0].default_photo) {
+                    const imageUrl = data.results[0].default_photo.medium_url;
+                    speciesImage.src = imageUrl;
+                    speciesImage.style.display = 'block';
+                    imageError.style.display = 'none';
+                } else {
+                    throw new Error('未找到物种图片');
+                }
+            })
+            .catch(error => {
+                console.error('获取图片失败:', error);
+                speciesImage.style.display = 'none';
+                imageError.style.display = 'block';
+            })
+            .finally(() => {
+                imageLoading.style.display = 'none';
+            });
+    }
 
     // 检查答案
     checkBtn.addEventListener('click', () => {

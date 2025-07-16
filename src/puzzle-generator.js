@@ -16,7 +16,7 @@ export function generatePuzzleData(birds) {
     // 从鸟类数据中提取单词和线索
     const allWords = birds.map(bird => ({
         text: bird.name,
-        clue: `国家${bird.protection.国家重点保护动物}级保护鸟类: ${bird.name} (IUCN: ${bird.protection.IUCN红色名录})`
+        obj: bird,
     }));
 
     // 优化的填字游戏生成算法
@@ -59,9 +59,9 @@ export function generatePuzzleData(birds) {
                     const newAcross = [...currentAcross];
                     const newDown = [...currentDown];
                     if (direction === 'across') {
-                        newAcross.push({ number: currentNum, text: word.clue });
+                        newAcross.push({ number: currentNum, obj: word.obj });
                     } else {
-                        newDown.push({ number: currentNum, text: word.clue });
+                        newDown.push({ number: currentNum, obj: word.obj });
                     }
 
                     // 递归继续放置下一个单词

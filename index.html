@@ -12,15 +12,10 @@
     <div class="container">
         <div class="crossword-container">
             <div id="crossword-grid"></div>
-            <div class="clues-container">
-                <div class="clues-across">
-                    <h3>横向</h3>
-                    <div id="across-clues"></div>
-                </div>
-                <div class="clues-down">
-                    <h3>纵向</h3>
-                    <div id="down-clues"></div>
-                </div>
+            <div class="species-image-container">
+                <img id="species-image" src="" alt="物种图片">
+                <div id="image-loading" style="display: none;">加载中...</div>
+                <div id="image-error" style="display: none;">无法加载图片</div>
             </div>
             <div class="word-input-container">
                 <input type="text" id="word-input" placeholder="点击数字后在此输入答案...">
